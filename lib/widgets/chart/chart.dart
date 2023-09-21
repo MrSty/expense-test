@@ -1,6 +1,7 @@
-import 'package:expenses_track/models/expense.dart';
-import 'package:expenses_track/widgets/chart/chart_bar.dart';
 import 'package:flutter/material.dart';
+
+import 'package:expenses_track/widgets/chart/chart_bar.dart';
+import 'package:expenses_track/models/expense.dart';
 
 class Chart extends StatelessWidget {
   const Chart({super.key, required this.expenses});
@@ -12,18 +13,20 @@ class Chart extends StatelessWidget {
       ExpenseBucket.forCategory(expenses, Category.food),
       ExpenseBucket.forCategory(expenses, Category.leisure),
       ExpenseBucket.forCategory(expenses, Category.travel),
-      ExpenseBucket.forCategory(expenses, Category.work)
+      ExpenseBucket.forCategory(expenses, Category.work),
     ];
   }
 
   double get maxTotalExpense {
-    double max = 0;
-    for (var element in buckets) {
-      if (element.totalExpense > max) {
-        max = element.totalExpense;
+    double maxTotalExpense = 0;
+
+    for (final bucket in buckets) {
+      if (bucket.totalExpense > maxTotalExpense) {
+        maxTotalExpense = bucket.totalExpense;
       }
     }
-    return max;
+
+    return maxTotalExpense;
   }
 
   @override
@@ -33,16 +36,16 @@ class Chart extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.symmetric(
-        horizontal: 8,
         vertical: 16,
+        horizontal: 8,
       ),
       width: double.infinity,
-      height: 150,
+      height: 180,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
         gradient: LinearGradient(
           colors: [
-            Theme.of(context).colorScheme.primary.withOpacity(0.35),
+            Theme.of(context).colorScheme.primary.withOpacity(0.3),
             Theme.of(context).colorScheme.primary.withOpacity(0.0)
           ],
           begin: Alignment.bottomCenter,
@@ -55,27 +58,24 @@ class Chart extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                for (var bucket in buckets)
+                for (final bucket in buckets) // alternative to map()
                   ChartBar(
                     fill: bucket.totalExpense == 0
                         ? 0
                         : bucket.totalExpense / maxTotalExpense,
-                    isDarkMode: isDarkMode,
                   )
               ],
             ),
           ),
-          const SizedBox(
-            height: 13,
-          ),
+          const SizedBox(height: 12),
           Row(
             children: buckets
                 .map(
-                  (e) => Expanded(
+                  (bucket) => Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
                       child: Icon(
-                        categoryIcons[e.category],
+                        categoryIcons[bucket.category],
                         color: isDarkMode
                             ? Theme.of(context).colorScheme.secondary
                             : Theme.of(context)
